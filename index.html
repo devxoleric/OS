@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XOLERIC OS</title>
+    <style>
+        :root {
+            --primary: #00ff41;
+            --bg: #050505;
+            --font-main: 'Cascadia Code', 'Consolas', monospace;
+            --p-user: #00d4ff;
+            --p-host: #ff2a6d;
+        }
+
+        /* Mavzular */
+        body.theme-neon { --primary: #00ff41; --p-user: #00d4ff; }
+        body.theme-blood { --primary: #ff003c; --p-user: #ffffff; }
+        body.theme-cyber { --primary: #f0f; --p-user: #0ff; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        #ui-wrapper {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        #output { font-size: 14px; line-height: 1.6; text-shadow: 0 0 5px rgba(0,255,65,0.3); }
+
+        /* Terminal Prompt Stili */
+        .prompt-box { margin-top: 15px; }
+        .p-head { font-weight: bold; margin-bottom: 2px; }
+        .p-input-line { display: flex; align-items: center; gap: 8px; }
+        #cmd-input {
+            background: transparent; border: none; color: #fff;
+            font-family: inherit; font-size: 16px; flex: 1;
+            outline: none; font-weight: bold; caret-color: var(--primary);
+        }
+
+        /* Maxsus dizaynlar */
+        .log-sys { color: #fff; font-weight: bold; border-left: 3px solid var(--primary); padding-left: 8px; margin: 5px 0; }
+        .log-err { color: #ff2a6d; animation: shake 0.2s; }
+        .log-mission { color: #ffcc00; background: rgba(255, 204, 0, 0.1); padding: 5px; border-radius: 4px; }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Progress Bar */
+        .progress-bar { width: 200px; height: 10px; border: 1px solid var(--primary); margin: 5px 0; position: relative; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.1s; }
+    </style>
+</head>
+<body class="theme-neon">
+
+<canvas id="matrix-canvas"></canvas>
+
+<div id="ui-wrapper" onclick="document.getElementById('cmd-input').focus()">
+    <div id="output">
+        <div class="log-sys">XOLERIC TITAN OS YUKLANDI...</div>
+        <div>Tizim holati: <span style="color:#0f0">XAVFSIZ</span> | Foydalanuvchi: <span class="p-user">Root</span></div>
+        <div style="color: #888;">'help' - barcha buyruqlar ro'yxati.</div>
+        <hr style="border: 0; border-top: 1px solid #222; margin: 10px 0;">
+    </div>
+
+    <div class="prompt-box">
+        <div class="p-head">
+            <span style="color:var(--primary)">┌──(</span><span class="p-user">root🌀xoleric</span><span style="color:var(--primary)">)-[</span><span style="color:#fff">/home/xoleric</span><span style="color:var(--primary)">]</span>
+        </div>
+        <div class="p-input-line">
+            <span style="color:var(--primary)">└─$</span>
+            <input type="text" id="cmd-input" spellcheck="false" autocomplete="off" autofocus>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * TITAN OS - ULTIMATE LOGIC
+ */
+
+// --- 1. MATRIX ENGINE ---
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+let drops = [];
+
+function initMatrix() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const cols = Math.floor(canvas.width / 20);
+    drops = new Array(cols).fill(1);
+}
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary');
+    ctx.font = '15px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(Math.random() * 128);
+        ctx.fillText(text, i * 20, drops[i] * 20);
+        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+
+// --- 2. GAME & MISSION LOGIC ---
+let userStats = { level: 1, exp: 0, coins: 100, missionsDone: 0 };
+
+const Missions = {
+    current: null,
+    list: [
+        { id: 1, name: "Sodda Buzg'unchilik", target: "127.0.0.1", reward: 50, exp: 20 },
+        { id: 2, name: "Bank Shifrini Buzish", target: "central.bank.uz", reward: 500, exp: 100 },
+        { id: 3, name: "NASA Arxiviga Kirish", target: "nasa.gov", reward: 2000, exp: 500 }
+    ]
+};
+
+// --- 3. SHELL ENGINE ---
+const Shell = {
+    out: document.getElementById('output'),
+    input: document.getElementById('cmd-input'),
+
+    print(txt, cls = '') {
+        const d = document.createElement('div');
+        d.className = `log-line ${cls}`;
+        d.innerHTML = txt;
+        this.out.appendChild(d);
+        document.getElementById('ui-wrapper').scrollTo(0, document.getElementById('ui-wrapper').scrollHeight);
+    },
+
+    async simulateProgress(time, label) {
+        this.print(label);
+        const barId = 'bar-' + Math.random().toString(36).substr(2, 9);
+        this.print(`<div class="progress-bar"><div id="${barId}" class="progress-fill"></div></div>`);
+        const bar = document.getElementById(barId);
+        for(let i=0; i<=100; i+=5) {
+            bar.style.width = i + '%';
+            await new Promise(r => setTimeout(r, time/20));
+        }
+    },
+
+    commands: {
+        'help': () => Shell.print(`
+            <b>KATEGORIYALAR:</b><br>
+            - [system]: status, clear, theme [name], whoami<br>
+            - [social]: telegram, instagram, github<br>
+            - [hack]: scan [ip], brute [target], hack [target]<br>
+            - [missions]: jobs, start [id], profile<br>
+            - [games]: coin, guess [num]
+        `),
+        
+        'status': () => Shell.print(`LVL: ${userStats.level} | EXP: ${userStats.exp} | COINS: ${userStats.coins}$`, "log-sys"),
+        
+        'theme': (args) => {
+            const t = args[0];
+            if(['neon', 'blood', 'cyber'].includes(t)) {
+                document.body.className = 'theme-' + t;
+                Shell.print("Mavzu o'zgardi: " + t, "log-sys");
+            } else Shell.print("Mavjud: neon, blood, cyber", "log-err");
+        },
+
+        'telegram': () => { Shell.print("Telegram ochilmoqda..."); window.open('https://t.me/cvants', '_blank'); },
+        'github' : () => {Shell.print("github ochilmoqda..."); window.open('https://github.com/devxoleric', '_blank');},
+        'instagram': () => { Shell.print("Instagram ochilmoqda..."); window.open('https://instagram.com/cvant23', '_blank'); },
+
+        'jobs': () => {
+            Shell.print("<b>FAOL MISSIYALAR:</b>", "log-mission");
+            Missions.list.forEach(m => Shell.print(`[ID: ${m.id}] ${m.name} | Mukofot: ${m.reward}$`));
+        },
+
+        'start': async (args) => {
+            const m = Missions.list.find(x => x.id == args[0]);
+            if(!m) return Shell.print("Missiya ID xato!", "log-err");
+            
+            await Shell.simulateProgress(2000, `Hujum boshlandi: ${m.target}`);
+            if(Math.random() > 0.3) {
+                userStats.coins += m.reward;
+                userStats.exp += m.exp;
+                Shell.print(`G'ALABA! +${m.reward}$ va +${m.exp} EXP olindi.`, "log-sys");
+            } else {
+                Shell.print("Muvaffaqiyatsizlik! Firewall sizni blokladi.", "log-err");
+            }
+        },
+
+        'scan': async (args) => {
+            if(!args[0]) return Shell.print("IP manzil kiriting!", "log-err");
+            await Shell.simulateProgress(1500, `Skanerlanmoqda: ${args[0]}`);
+            Shell.print(`Ochiq portlar: 80, 443, 22, 8080`, "log-sys");
+        },
+
+        'clear': () => Shell.out.innerHTML = '',
+        'whoami': () => Shell.print("Siz TITAN tarmog'ining maxfiy agentisiz."),
+    }
+};
+
+Shell.input.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+        const val = Shell.input.value.trim();
+        if(!val) return;
+        Shell.print(`<span style="color:var(--primary)">┌──(root💀titan)</span><br><span>└─$</span> ${val}`);
+        
+        const args = val.split(' ');
+        const cmd = args.shift().toLowerCase();
+        
+        if(Shell.commands[cmd]) Shell.commands[cmd](args);
+        else Shell.print(`Buyruq topilmadi: ${cmd}`, "log-err");
+        
+        Shell.input.value = '';
+    }
+});
+
+initMatrix();
+setInterval(drawMatrix, 50);
+window.onresize = initMatrix;
+</script>
+</body>
+</html>
