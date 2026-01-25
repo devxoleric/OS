@@ -132,7 +132,15 @@ function drawMatrix() {
         drops[i]++;
     }
 }
-
+// --- UI (VISUAL) ---
+        'mavzu': (args) => {
+            document.body.className = '';
+            if(args[0] === 'qon') document.body.classList.add('theme-blood');
+            else if(args[0] === 'muz') document.body.classList.add('theme-ice');
+            else if(args[0] === 'oltin') document.body.classList.add('theme-gold');
+            else return Shell.print("Mavjud: qon, muz, oltin, standart", "err-msg");
+            Shell.print("Mavzu o'zgartirildi.", "sys-msg");
+        },
 // --- 2. GAME & MISSION LOGIC ---
 let userStats = { level: 1, exp: 0, coins: 100, missionsDone: 0 };
 
