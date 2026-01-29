@@ -96,10 +96,10 @@
 
     <div class="prompt-box">
         <div class="p-head">
-            <span style="color:var(--primary)">┌──(</span><span class="p-user">root🌀xoleric</span><span style="color:var(--primary)">)-[</span><span style="color:#fff">/home/xoleric</span><span style="color:var(--primary)">]</span>
+            <span style="color:var(--primary)">┌──(</span><span class="p-user">root/>xoleric</span><span style="color:var(--primary)">)-[</span><span style="color:#fff">/home/xoleric</span><span style="color:var(--primary)">]</span>
         </div>
         <div class="p-input-line">
-            <span style="color:var(--primary)">└─$</span>
+            <span style="color:var(--primary)">└─/x</span>
             <input type="text" id="cmd-input" spellcheck="false" autocomplete="off" autofocus>
         </div>
     </div>
@@ -245,7 +245,7 @@ Shell.input.addEventListener('keydown', e => {
     if(e.key === 'Enter') {
         const val = Shell.input.value.trim();
         if(!val) return;
-        Shell.print(`<span style="color:var(--primary)">┌──(root🌀xoleric)</span><br><span>└─$</span> ${val}`);
+        Shell.print(`<span style="color:var(--primary)">┌──(root</xoleric)</span><br><span>└─$</span> ${val}`);
         
         const args = val.split(' ');
         const cmd = args.shift().toLowerCase();
