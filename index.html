@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xoleric OS | Artificial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Global o'zgaruvchilar */
+            --hue: 120;
+            --sat: 100%;
+            --light: 50%;
+            --primary: hsl(var(--hue), var(--sat), var(--light));
+            --primary-dim: hsl(var(--hue), var(--sat), 20%);
+            --bg: #030303;
+            --font-stack: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: var(--font-stack);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-shadow: 0 0 5px var(--primary-dim);
+        }
+
+        /* Matrix Background */
+        #matrix-bg {
+            position: fixed; inset: 0; z-index: 0; opacity: 0.8;
+        }
+
+        /* Old Monitor Effect */
+        .scanlines {
+            position: fixed; inset: 0; z-index: 2; pointer-events: none;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+        }
+
+        /* UI Container */
+        #terminal-ui {
+            position: relative; z-index: 10;
+            width: 100%; height: 100%;
+            padding: 15px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        #terminal-ui::-webkit-scrollbar { display: none; }
+
+        /* Matn Styllari */
+        .sys-msg { color: #ddd; margin-bottom: 4px; line-height: 1.4; word-wrap: break-word; }
+        .sys-success { color: var(--primary); font-weight: bold; }
+        .sys-err { color: #ff3333; font-weight: bold; }
+        .sys-info { color: #00d4ff; }
+        
+        /* AI Javobi uchun maxsus stil */
+        .ai-response {
+            color: #ff00ff; /* Neon Pink */
+            border-left: 3px solid #ff00ff;
+            background: rgba(255, 0, 255, 0.05);
+            padding: 8px;
+            margin: 5px 0 10px 0;
+            font-style: italic;
+            border-radius: 0 5px 5px 0;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* ASCII Art */
+        .ascii-art {
+            font-size: 10px; line-height: 10px; margin-bottom: 20px;
+            color: var(--primary); font-weight: bold; white-space: pre;
+        }
+
+        /* Prompt */
+        .input-group { margin-top: 10px; padding-bottom: 50px; }
+        .p-head { display: flex; flex-wrap: wrap; margin-bottom: 4px; font-size: 14px; }
+        .p-body { display: flex; align-items: center; }
+        
+        .c-user { color: #00d4ff; font-weight: bold; }
+        .c-path { color: #fff; }
+        .c-sym { color: var(--primary); }
+
+        #cmd-input {
+            background: transparent; border: none; color: #fff;
+            font-family: inherit; font-size: 16px; font-weight: bold;
+            flex: 1; margin-left: 8px; caret-color: var(--primary);
+        }
+
+        /* Portal Effect */
+        #portal {
+            position: fixed; inset: 0; z-index: 100;
+            background: #000; pointer-events: none; opacity: 0;
+            transform: scale(0.1); transition: all 0.8s cubic-bezier(0.7,0,0.3,1);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .portal-active { opacity: 1 !important; transform: scale(3) !important; background: radial-gradient(circle, var(--primary) 0%, #000 70%); }
+
+        @media(max-width: 600px) {
+            .ascii-art { font-size: 7px; line-height: 7px; }
+            #cmd-input { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+    <div class="scanlines"></div>
+    <div id="portal"></div>
+
+    <div id="terminal-ui" onclick="document.getElementById('cmd-input').focus()">
+        <div id="output">
+            <div class="ascii-art">
+██╗  ██╗ ██████╗ ██╗     ███████╗██████╗ ██╗ ██████╗
+╚██╗██╔╝██╔═══██╗██║     ██╔════╝██╔══██╗██║██╔════╝
+ ╚███╔╝ ██║   ██║██║     █████╗  ██████╔╝██║██║     
+ ██╔██╗ ██║   ██║██║     ██╔══╝  ██╔══██╗██║██║     
+██╔╝ ██╗╚██████╔╝███████╗███████╗██║  ██║██║╚██████╗
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝ ╚═════╝
+            </div>
+            <div class="sys-msg">System: <span class="sys-success">Online</span> | AI Core: <span style="color:#ff00ff">Active</span></div>
+            <div class="sys-msg">Xush kelibsiz, <span class="sys-success">Neo</span>. Men sizni tinglayapman.</div>
+            <div class="sys-msg" style="opacity:0.6; font-size:12px">Maslahat: Istalgan savolni bering yoki 'help' deb yozing.</div>
+            <br>
+        </div>
+
+        <div class="input-group">
+            <div class="p-head">
+                <span class="c-sym">╭──(</span><span class="c-sym">[</span><span class="c-user">neo@xoleric</span><span class="c-sym">]</span>
+                <span style="margin:0 5px"> </span><span class="c-sym">➜</span><span class="c-sym">)-[</span><span class="c-path">/home/xoleric</span><span class="c-sym">]</span>
+            </div>
+            <div class="p-body">
+                <span class="c-sym">╰┈➜</span>
+                <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autofocus>
+            </div>
+        </div>
+    </div>
+
+    <script src="ai-core.js"></script>
+
+<script>
+    /**
+     * SYSTEM CONFIG
+     */
+    const Themes = [
+        { hue: 120, name: "Matrix Green" },
+        { hue: 300, name: "Cyberpunk Pink" },
+        { hue: 45, name: "Golden State" },
+        { hue: 190, name: "Ice Blue" },
+        { hue: 0, name: "Red Alert" }
+    ];
+    let themeIdx = 0;
+
+    // --- MATRIX ENGINE ---
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
+    let width, height, columns = [];
+    const fontSize = 14;
+
+    function initMatrix() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        const colCount = Math.floor(width / fontSize);
+        columns = [];
+        for(let i=0; i<colCount; i++) columns.push({x: i*fontSize, y: Math.random()*-1000, s: 1+Math.random()*3});
+    }
+
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0,0,width,height);
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary');
+        ctx.font = 'bold '+fontSize+'px monospace';
+        columns.forEach(c => {
+            const char = "01XY" + String.fromCharCode(0x30A0 + Math.random()*96);
+            ctx.fillText(char.charAt(Math.floor(Math.random()*char.length)), c.x, c.y);
+            if(c.y > height && Math.random()>0.98) c.y = -50;
+            c.y += c.s;
+        });
+        requestAnimationFrame(drawMatrix);
+    }
+
+    // --- TERMINAL ENGINE ---
+    const output = document.getElementById('output');
+    const input = document.getElementById('cmd-input');
+    const terminal = document.getElementById('terminal-ui');
+
+    function print(html, type="sys-msg") {
+        const div = document.createElement('div');
+        div.className = type;
+        div.innerHTML = html;
+        output.appendChild(div);
+        terminal.scrollTo(0, terminal.scrollHeight);
+    }
+
+    function openPortal(url, deepLink) {
+        print("Portal ochilmoqda...", "sys-info");
+        const p = document.getElementById('portal');
+        p.classList.add('portal-active');
+        setTimeout(() => {
+            p.classList.remove('portal-active');
+            if(deepLink) {
+                window.location.href = deepLink;
+                setTimeout(() => window.location.href = url, 1000);
+            } else {
+                window.location.href = url;
+            }
+        }, 1000);
+    }
+
+    // --- COMMANDS ---
+    const Commands = {
+        'help': () => {
+            print("--- MAVJUD BUYRUQLAR ---", "sys-success");
+            print("* social: telegram, instagram, github");
+            print("* tizim: clear, date, theme, status");
+            print("* Yoki shunchaki AI bilan gaplashing!");
+        },
+        'clear': () => output.innerHTML = '',
+        'telegram': () => openPortal('https://t.me/neoorg', 'tg://resolve?domain=neoorg'),
+        'instagram': () => openPortal('https://instagram.com/cvant23', 'instagram://user?username=cvant23'),
+        'github': () => openPortal('https://github.com/xolericuz'),
+        'theme': () => {
+            themeIdx = (themeIdx + 1) % Themes.length;
+            document.documentElement.style.setProperty('--hue', Themes[themeIdx].hue);
+            print(`Mavzu o'zgardi: ${Themes[themeIdx].name}`, "sys-success");
+        },
+        'status': () => print("Xoleric OS v4.0 | AI Modules: Loaded | Security: High", "sys-info")
+    };
+
+    // --- EVENT HANDLER ---
+    input.addEventListener('keydown', e => {
+        if(e.key === 'Enter') {
+            const val = input.value.trim();
+            if(!val) return;
+
+            // Prompt tarixini chizish
+            const history = `
+                <div style="margin-top:8px; opacity:0.7; font-size:13px">
+                    <span class="c-sym">╭──(</span><span class="c-user">neo@xoleric</span><span class="c-sym">)</span>
+                    <span class="c-sym">╰┈➜</span> ${val}
+                </div>`;
+            print(history, "");
+            
+            input.value = '';
+            const cmd = val.split(' ')[0].toLowerCase();
+
+            // 1. Avval Buyruqlar tekshiriladi
+            if(Commands[cmd]) {
+                Commands[cmd]();
+            } 
+            // 2. Keyin AI tahlil qiladi (Matematika yoki Suhbat)
+            else {
+                // 'ai-core.js' dagi XolericAI obyekti ishlaydi
+                if(typeof XolericAI !== 'undefined') {
+                    const response = XolericAI.analyze(val);
+                    
+                    // Javobni harfma-harf yozish effekti
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'ai-response';
+                    output.appendChild(aiDiv);
+                    
+                    let i = 0;
+                    const typeWriter = setInterval(() => {
+                        aiDiv.innerHTML += response.charAt(i);
+                        terminal.scrollTo(0, terminal.scrollHeight);
+                        i++;
+                        if(i >= response.length) clearInterval(typeWriter);
+                    }, 20); // Yozish tezligi
+
+                } else {
+                    print("Xatolik: AI Core fayli topilmadi!", "sys-err");
+                }
+            }
+        }
+    });
+
+    // Theme Switcher (4-Tap)
+    let taps = 0, tapTimer;
+    document.body.addEventListener('click', () => {
+        document.getElementById('cmd-input').focus();
+        taps++;
+        clearTimeout(tapTimer);
+        tapTimer = setTimeout(() => taps=0, 800);
+        if(taps === 4) Commands['theme']();
+    });
+
+    // Start
+    window.onresize = initMatrix;
+    initMatrix();
+    drawMatrix();
+    
+    // Xush kelibsiz xabarini kechikib chiqarish (AI yuklangani bilinishi uchun)
+    setTimeout(() => {
+        if(typeof XolericAI !== 'undefined') {
+            console.log("AI Core Loaded Successfully");
+        }
+    }, 1000);
+
+</script>
+</body>
+</html>
