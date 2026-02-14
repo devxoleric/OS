@@ -3,49 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- SEO, Title va Link Preview KODLARI -->
-<title>Xoleric / Net ≥ Terminal</title>
-<meta name="description" content="Xoleric.net — interaktiv virtual terminal, cyber missiyalar va hacker simulatori. Buyruqlar bilan tizimni boshqarish va misiyalarni bajarish.">
-<meta name="keywords" content="Xoleric, virtual terminal, hacker simulator, cyber missions, interaktiv terminal, web hacking, info sec, neon theme, matrix effect">
-<meta name="author" content="Xoleric Dev">
-
-<!-- Open Graph / Facebook -->
-<meta property="og:title" content="Xoleric / Net ≥ - Virtual Terminal va Cyber Missions">
-<meta property="og:description" content="Interaktiv terminal va cyber missiyalar simulatori. Buyruqlar bilan tizimni boshqarish va hacker vazifalarini bajarish.">
-<meta property="og:image" content="https://xolericuz.github.io/xoleric.os//assets/preview-image.png">
-<meta property="og:url" content="https://xoleric.net">
-<meta property="og:type" content="website">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Xoleric / Net ≥ - Virtual Terminal va Cyber Missions">
-<meta name="twitter:description" content="Interaktiv virtual terminal va cyber missiyalar simulatori. Buyruqlar orqali tizimni boshqarish.">
-<meta name="twitter:image" content="https://xolericuz.github.io/xoleric.os//assets/preview-image.png">
-
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✧</text></svg>">
-</head>
-<body>        
-</head>
-<body>
-</head>
-<body>
+    <title>Xoleric / Net ≥ Terminal v3.0</title>
+    
     <style>
         :root {
             --primary: #00ff41;
-            --bg: #050505;
-            --font-main: 'Cascadia Code', 'Consolas', monospace;
+            --bg: #010101;
+            --font-main: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
             --p-user: #00d4ff;
-            --p-host: #ff2a6d;
+            --p-path: #ffffff;
+            --ai-color: #ff00ff;
         }
-
-        /* Mavzular */
-        body.neon { --primary: #ff003c; --p-user: #00d4ff; }
-        body.blood { --primary: #ff003c; --p-user: #ffffff; }
-        body.cyber { --primary: #f0f; --p-user: #0ff; }
-        /* Yangi mavzular qo'shildi */
-        body.ice { --primary: #00ffff; --p-user: #ffffff; }
-        body.gold { --primary: #ffd700; --p-user: #ff4500; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
@@ -53,81 +21,114 @@
             background-color: var(--bg);
             color: var(--primary);
             font-family: var(--font-main);
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: color 0.5s, background 0.5s;
+            transition: color 0.4s ease;
         }
 
+        /* 3-Qatlamli Matrix Canvas */
         #matrix-canvas {
             position: fixed;
             inset: 0;
             z-index: 1;
-            opacity: 0.7000;
             pointer-events: none;
         }
 
+        /* UI Kontener */
         #ui-wrapper {
             position: relative;
             z-index: 10;
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding: 12px;
             overflow-y: auto;
             scrollbar-width: none;
+            text-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+        }
+        #ui-wrapper::-webkit-scrollbar { display: none; }
+
+        #output { 
+            font-size: 14px; 
+            line-height: 1.45; 
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        #output { font-size: 14px; line-height: 1.6; text-shadow: 0 0 5px rgba(0,255,65,0.3); }
+        /* Mobil Header */
+        .boot-header {
+            border: 1px solid var(--primary);
+            padding: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            background: rgba(0, 255, 65, 0.03);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-        /* Terminal Prompt Stili */
-        .prompt-box { margin-top: 15px; }
-        .p-head { font-weight: bold; margin-bottom: 2px; }
-        .p-input-line { display: flex; align-items: center; gap: 8px; }
+        /* Loglar */
+        .log-line { margin-bottom: 2px; word-wrap: break-word; word-break: break-all; }
+        .log-sys { color: #fff; border-left: 3px solid var(--primary); padding-left: 8px; background: rgba(255,255,255,0.05); }
+        .log-err { color: #ff003c; border-left: 3px solid #ff003c; padding-left: 8px; font-weight: bold; }
+        .log-ai { color: var(--ai-color); border-left: 3px solid var(--ai-color); padding-left: 8px; font-style: italic; }
+        .log-mission { color: #ffd700; background: rgba(255, 215, 0, 0.05); padding: 8px; border: 1px dashed #ffd700; }
+
+        /* Kali Prompt Stili */
+        .prompt-container { margin-top: 10px; }
+        .p-head { display: flex; flex-wrap: wrap; font-size: 13px; margin-bottom: 2px; }
+        .p-input-line { display: flex; align-items: center; gap: 6px; }
+        
         #cmd-input {
             background: transparent; border: none; color: #fff;
             font-family: inherit; font-size: 16px; flex: 1;
             outline: none; font-weight: bold; caret-color: var(--primary);
+            width: 100%;
         }
 
-        /* Maxsus dizaynlar */
-        .log-sys { color: #fff; font-weight: bold; border-left: 3px solid var(--primary); padding-left: 8px; margin: 5px 0; }
-        .log-err { color: #ff2a6d; animation: shake 0.2s; }
-        .log-mission { color: #ffcc00; background: rgba(255, 204, 0, 0.1); padding: 5px; border-radius: 4px; }
-        
+        /* Animatsiyalar */
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            100% { transform: translateX(0); }
+            0% { transform: translate(0,0); }
+            25% { transform: translate(-3px, 2px); }
+            50% { transform: translate(3px, -2px); }
+            75% { transform: translate(-3px, -2px); }
+            100% { transform: translate(0,0); }
         }
+        .vibrate { animation: shake 0.15s infinite; }
 
-        /* Progress Bar */
-        .progress-bar { width: 200px; height: 10px; border: 1px solid var(--primary); margin: 5px 0; position: relative; }
-        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.1s; }
+        .progress-bar { width: 100%; height: 8px; border: 1px solid var(--primary); background: #111; margin: 5px 0; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.1s linear; }
+
+        @media (max-width: 500px) {
+            #output { font-size: 12px; }
+            .p-head { font-size: 11px; }
+            #cmd-input { font-size: 14px; }
+        }
     </style>
 </head>
-<body class="theme-neon">
+<body>
 
 <canvas id="matrix-canvas"></canvas>
 
 <div id="ui-wrapper" onclick="document.getElementById('cmd-input').focus()">
     <div id="output">
-        <div class="log-sys">╔═══════════════════╗
-│  XOLERIC OS • LIVE SYSTEM  ● ONLINE            │
-│─────────────────────│ </div>
-        <div>xoleric//status//active<span style="color:#0f0">⎇</span> | neo▮<span class="p-user">root ≥</span></div>
-        <div style="color: #888;">▮Tupe ⎇ help or Info ▮</div>
-        <hr style="border: 0; border-top: 1px solid #222; margin: 10px 0;">
+        <div class="boot-header">
+            XOLERIC OS
+        </div>
+        <div style="color: #888;">[Tizim yuklanmoqda...] <span style="color: var(--primary);">Tayyor.</span></div>
+        <div style="color: #888;">Mening ismim <span style="color: var(--ai-color);">XOLERIC AI</span>. Sizga qanday yordam bera olaman?</div>
+        <div style="font-size: 11px; opacity: 0.6;">Yordam uchun 'help' deb yozing.</div>
     </div>
 
-    <div class="prompt-box">
+    <div class="prompt-container">
         <div class="p-head">
-            <span style="color:var(--primary)">╭──(</span><span class="p-user">[neo@xoleric] ➜▮ </span><span style="color:var(--primary)">)-[</span><span style="color:#fff">/home/xoleric</span><span style="color:var(--primary)">]</span>
+            <span style="color:var(--primary)">╭──(</span><span style="color:var(--p-user)">[neo@xoleric] ➜</span><span style="color:var(--primary)">)-[</span><span style="color:var(--p-path)">/home/xoleric</span><span style="color:var(--primary)">]</span>
         </div>
         <div class="p-input-line">
-            <span style="color:var(--primary)">╰┈➜▮</span>
+            <span style="color:var(--primary)">╰┈➜</span>
             <input type="text" id="cmd-input" spellcheck="false" autocomplete="off" autofocus>
         </div>
     </div>
@@ -135,161 +136,199 @@
 
 <script>
 /**
- * TITAN OS - ULTIMATE LOGIC
+ * CORE LOGIC
  */
 
-// --- 1. MATRIX ENGINE ---
+// --- 1. 3-QATLAMLI MATRIX ---
 const canvas = document.getElementById('matrix-canvas');
 const ctx = canvas.getContext('2d');
-let drops = [];
+let matrixSpeed = 1;
+
+const layers = [
+    { size: 10, speed: 0.5, opacity: 0.2, drops: [] },
+    { size: 14, speed: 1.2, opacity: 0.5, drops: [] },
+    { size: 20, speed: 2.5, opacity: 0.8, drops: [] }
+];
 
 function initMatrix() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const cols = Math.floor(canvas.width / 20);
-    drops = new Array(cols).fill(1);
+    layers.forEach(l => {
+        l.drops = new Array(Math.ceil(canvas.width / l.size)).fill(0).map(() => Math.random() * -50);
+    });
 }
 
 function drawMatrix() {
-    ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+    ctx.fillStyle = 'rgba(1, 1, 1, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // Dinamik rang olish
-    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary').trim();
-    ctx.font = '15px monospace';
+    const mainColor = getComputedStyle(document.body).getPropertyValue('--primary').trim();
 
-    for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(Math.random() * 128);
-        ctx.fillText(text, i * 20, drops[i] * 20);
-        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-    }
+    layers.forEach(l => {
+        ctx.font = `${l.size}px monospace`;
+        ctx.globalAlpha = l.opacity;
+        ctx.fillStyle = mainColor;
+        for (let i = 0; i < l.drops.length; i++) {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            ctx.fillText(text, i * l.size, l.drops[i] * l.size);
+            if (l.drops[i] * l.size > canvas.height && Math.random() > 0.98) l.drops[i] = 0;
+            l.drops[i] += l.speed * matrixSpeed;
+        }
+    });
+    requestAnimationFrame(drawMatrix);
 }
 
-// --- 2. GAME & MISSION LOGIC ---
-let userStats = { level: 1, exp: 0, coins: 100, missionsDone: 0 };
-
-const Missions = {
-    current: null,
-    list: [
-        { id: 1, name: "Sodda Buzg'unchilik", target: "127.0.0.1", reward: 50, exp: 20 },
-        { id: 2, name: "Bank Shifrini Buzish", target: "central.bank.uz", reward: 500, exp: 100 },
-        { id: 3, name: "NASA Arxiviga Kirish", target: "nasa.gov", reward: 2000, exp: 500 }
-    ]
+// --- 2. LOKAL AI BAZASI ---
+const KasperAI = {
+    knowledge: {
+        "salom": "Vaalaykum assalom! Xoleric OS tizimiga xush kelibsiz. Men Kasperman.",
+        "kim": "Men Xoleric tomonidan yaratilgan lokal sun'iy intellektman. API-larsiz ishlayman.",
+        "xoleric": "Xoleric - bu tizimning asoschisi va dasturchisi. U kiberxavfsizlik ishqibozi.",
+        "qalaysan": "Mening bitlarim va baytlarim joyida! Sizchi, dasturlashga tayyormisiz?",
+        "nima": "Men buyruqlarni bajarishim, mavzuni o'zgartirishim va siz bilan suhbatlashishim mumkin.",
+        "rahmat": "Arzimaydi! Tizimda qolishingizdan xursandman.",
+        "hazil": "Nega dasturchilar quyoshni yoqtirishmaydi? Chunki unda 'bug'lar ko'p ko'rinadi!",
+        "yosh": "Men raqamli dunyoda tug'ilganman, shuning uchun doim 0 va 1 yoshdaman."
+    },
+    getResponse(input) {
+        input = input.toLowerCase();
+        for (let key in this.knowledge) {
+            if (input.includes(key)) return this.knowledge[key];
+        }
+        try {
+            if (/^[0-9+\-*/().\s]+$/.test(input)) return `Hisob natijasi: ${eval(input)}`;
+        } catch(e) {}
+        return "Buni tushunmadim, lekin o'rganishga harakat qilyapman. Buyruqlar uchun 'help' deb yozing.";
+    }
 };
 
 // --- 3. SHELL ENGINE ---
 const Shell = {
     out: document.getElementById('output'),
     input: document.getElementById('cmd-input'),
+    wrapper: document.getElementById('ui-wrapper'),
+    isTyping: false,
 
-    print(txt, cls = '') {
+    async print(text, cls = '', speed = 10) {
+        this.isTyping = true;
+        this.input.disabled = true;
         const d = document.createElement('div');
         d.className = `log-line ${cls}`;
-        d.innerHTML = txt;
         this.out.appendChild(d);
-        document.getElementById('ui-wrapper').scrollTo(0, document.getElementById('ui-wrapper').scrollHeight);
+
+        let i = 0;
+        return new Promise(res => {
+            const interval = setInterval(() => {
+                d.innerHTML += text[i];
+                i++;
+                this.wrapper.scrollTo(0, this.wrapper.scrollHeight);
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    this.isTyping = false;
+                    this.input.disabled = false;
+                    this.input.focus();
+                    res();
+                }
+            }, speed);
+        });
     },
 
-    async simulateProgress(time, label) {
-        this.print(label);
-        const barId = 'bar-' + Math.random().toString(36).substr(2, 9);
-        this.print(`<div class="progress-bar"><div id="${barId}" class="progress-fill"></div></div>`);
-        const bar = document.getElementById(barId);
-        for(let i=0; i<=100; i+=5) {
-            if(bar) bar.style.width = i + '%';
-            await new Promise(r => setTimeout(r, time/20));
-        }
+    async progress(label, time = 2000) {
+        await this.print(label, 'log-sys');
+        const bar = document.createElement('div');
+        bar.className = 'progress-bar';
+        bar.innerHTML = '<div class="progress-fill"></div>';
+        this.out.appendChild(bar);
+        const fill = bar.querySelector('.progress-fill');
+        
+        return new Promise(res => {
+            let p = 0;
+            const step = setInterval(() => {
+                p += 2;
+                fill.style.width = p + '%';
+                if (p >= 100) {
+                    clearInterval(step);
+                    res();
+                }
+            }, time / 50);
+        });
     },
 
-    commands: {
-        'help': () => Shell.print(`
-            <b>KATEGORIYALAR:</b><br>
-            - [system]: status, clear, whoami<br>
-            - [visual]:  [nomi] (neon, blood, cyber, ice, gold)<br>
-            - [social]: info, video1, telegram, Instagram, home, github<br>
-            - [hack]: scan [ip], start [id]<br>
-            - [missions]: jobs
-        `),
-        
-        'status': () => Shell.print(`LVL: ${userStats.level} | EXP: ${userStats.exp} | COINS: ${userStats.coins}$`, "log-sys"),
-        
-        'theme': (args) => {
-            const t = args[0] ? args[0].toLowerCase() : '';
-            const themes = {
-                'neon': 'neon',
-                'blood': 'blood',
-                'qon': 'blood',
-                'cyber': 'cyber',
-                'ice': 'ice',
-                'muz': 'ice',
-                'gold': 'gold',
-                'oltin': 'gold'
-            };
-
-            if(themes[t]) {
-                document.body.className = themes[t];
-                Shell.print("Mavzu o'zgardi: " + t, "log-sys");
-            } else {
-                Shell.print("Mavjud: neon, blood (qon), cyber, ice (muz), gold (oltin)", "log-err");
-            }
-        },
-
-        'info': () => { Shell.print("Info uchun kuting..."); window.open('https://xolericuz.github.io/Info/', '_blank'); },
-        'telegram': () => { Shell.print("Telegram ochilmoqda..."); window.open('https://t.me/neoorg', '_blank'); },
-        'github' : () => {Shell.print("Github ochilmoqda..."); window.open('https://github.com/xolericuz', '_blank');},
-        'home' : () => {Shell.print("vertual uyim ochilmoqda..."); window.open('https://xolericuz.github.io/core/', '_blank');}, 
-        'instagram': () => { Shell.print("Instagram ochilmoqda..."); window.open('https://instagram.com/cvant23', '_blank'); },
-        'video1': () => { Shell.print("tame impala..."); window.open('https://t.me/eliotBlog/134', '_blank'); },
-
-        'jobs': () => {
-            Shell.print("<b>FAOL MISSIYALAR:</b>", "log-mission");
-            Missions.list.forEach(m => Shell.print(`[ID: ${m.id}] ${m.name} | Mukofot: ${m.reward}$`));
-        },
-
-        'start': async (args) => {
-            const m = Missions.list.find(x => x.id == args[0]);
-            if(!m) return Shell.print("Missiya ID xato! (Masalan: start 1)", "log-err");
-            
-            await Shell.simulateProgress(2000, `Hujum boshlandi: ${m.target}`);
-            if(Math.random() > 0.3) {
-                userStats.coins += m.reward;
-                userStats.exp += m.exp;
-                Shell.print(`G'ALABA! +${m.reward}$ va +${m.exp} EXP olindi.`, "log-sys");
-            } else {
-                Shell.print("Muvaffaqiyatsizlik! Firewall sizni blokladi.", "log-err");
-            }
-        },
-
-        'scan': async (args) => {
-            if(!args[0]) return Shell.print("IP manzil kiriting! (Masalan: scan 192.168.1.1)", "log-err");
-            await Shell.simulateProgress(1500, `Skanerlanmoqda: ${args[0]}`);
-            Shell.print(`Ochiq portlar: 80, 443, 22, 8080`, "log-sys");
-        },
-
-        'clear': () => Shell.out.innerHTML = '',
-        'whoami': () => Shell.print("Siz xoleric tarmog'ining maxfiy agentisiz."),
+    async handleSocial(url, name) {
+        matrixSpeed = 5;
+        this.wrapper.classList.add('vibrate');
+        await this.print(`[!] ${name} serveriga ulanish...`, 'log-err');
+        await this.progress("Xavfsizlik protokoli chetlab o'tilmoqda...");
+        this.wrapper.classList.remove('vibrate');
+        matrixSpeed = 1;
+        window.open(url, '_blank');
     }
 };
 
-Shell.input.addEventListener('keydown', e => {
-    if(e.key === 'Enter') {
+// --- 4. BUYRUQLAR ---
+const uzColors = {
+    "qizil": "#ff003c", "yashil": "#00ff41", "kok": "#00d4ff", "ko'k": "#00d4ff",
+    "sariq": "#ffd700", "oltin": "#ffd700", "oq": "#ffffff", "muz": "#00ffff", "pushti": "#ff00ff"
+};
+
+const Commands = {
+    'help': async () => {
+        await Shell.print("HI I'm Xoleric. Men ushbu interaktiv terminal va virtual olam yaratuvchisiman.", "log-sys");
+        await Shell.print("MAVJUD BUYRUQLAR:", "highlight");
+        await Shell.print("- TIZIM: status, clear, whoami, info");
+        await Shell.print("- ALOQA: telegram, instagram, github, home");
+        await Shell.print("- HACK: scan [ip], hack [id]");
+        await Shell.print("- MAVZU: [rang nomi] (masalan: qizil, muz, oltin)");
+        await Shell.print("- AI: Shunchaki Kasper bilan gaplashing!");
+    },
+    'status': async () => await Shell.print("Tizim: Online | Kasper AI: Faol | Xoleric Core: v3.0", "log-sys"),
+    'clear': () => Shell.out.innerHTML = '',
+    'whoami': async () => await Shell.print("Siz neo-foydalanuvchi, Xoleric OS mehmonisiz.", "log-sys"),
+    'telegram': () => Shell.handleSocial('https://t.me/neoorg', 'Telegram'),
+    'instagram': () => Shell.handleSocial('https://instagram.com/cvant23', 'Instagram'),
+    'github': () => Shell.handleSocial('https://github.com/xolericuz', 'GitHub'),
+    'home': () => Shell.handleSocial('https://xolericuz.github.io/core/', 'Xoleric Core'),
+    'scan': async (args) => {
+        await Shell.progress(`Portlar skanerlanmoqda: ${args[0] || '127.0.0.1'}`);
+        await Shell.print("Ochiq portlar: 80, 443, 22, 8080", "log-sys");
+    },
+    'hack': async (args) => {
+        await Shell.print(`[Xavf] ${args[0] || 'Maqsad'} tizimi buzilmoqda...`, 'log-err');
+        await Shell.progress("Brute-force hujumi...");
+        await Shell.print("MUVAFFAQIYATLI! Ma'lumotlar yuklandi.", "log-sys");
+    }
+};
+
+// --- 5. EVENT HANDLERS ---
+Shell.input.addEventListener('keydown', async e => {
+    if (e.key === 'Enter' && !Shell.isTyping) {
         const val = Shell.input.value.trim();
-        if(!val) return;
-        Shell.print(`<span style="color:var(--primary)">┌──[neo@xoleric] ➜▮</span><br><span>╰┈➜▮</span> ${val}`);
-        
+        if (!val) return;
+
+        // Echo prompt
+        const d = document.createElement('div');
+        d.className = 'prompt-container';
+        d.innerHTML = `<div class="p-head"><span style="color:var(--primary)">╭──(</span><span style="color:var(--p-user)">[neo@xoleric] ➜</span><span style="color:var(--primary)">)-[</span><span style="color:var(--p-path)">/home/xoleric</span><span style="color:var(--primary)">]</span></div>
+                       <div class="p-input-line"><span style="color:var(--primary)">╰┈➜</span> ${val}</div>`;
+        Shell.out.appendChild(d);
+        Shell.input.value = '';
+
         const args = val.split(' ');
         const cmd = args.shift().toLowerCase();
-        
-        if(Shell.commands[cmd]) Shell.commands[cmd](args);
-        else Shell.print(`Buyruq topilmadi: ${cmd}`, "log-err");
-        
-        Shell.input.value = '';
+
+        if (uzColors[cmd]) {
+            document.documentElement.style.setProperty('--primary', uzColors[cmd]);
+            await Shell.print(`Mavzu o'zgardi: ${cmd}`, "log-sys");
+        } else if (Commands[cmd]) {
+            await Commands[cmd](args);
+        } else {
+            const aiRes = KasperAI.getResponse(val);
+            await Shell.print(`AI: ${aiRes}`, "log-ai");
+        }
     }
 });
 
-// Start
 initMatrix();
-setInterval(drawMatrix, 50);
+drawMatrix();
 window.onresize = initMatrix;
 </script>
 </body>
