@@ -1,75 +1,76 @@
-# XOLERIC.OS
+# 🖥️ XOLERIC.OS
 
 **XOLERIC.OS** — bu brauzerda ishlaydigan interaktiv AI terminal tizimi.  
-Loyiha CLI (Command Line Interface) muhitini simulyatsiya qiladi va foydalanuvchi bilan sun’iy intellekt orqali muloqot qiladi.
+Loyiha CLI (Command Line Interface) muhitini simulyatsiya qiladi va foydalanuvchi bilan sun’iy intellekt orqali muloqot qiladi. 1
 
-🌐 Live: https://xolericuz.github.io/xoleric.os/
-
----
-
-## 👤 Creator
-
-X — Full-Stack Developer & System Architect  
-Frontend va Backend sohasida professional darajada ishlaydi.  
-Modul arxitektura, AI tizimlari va interaktiv WebOS interfeyslar yaratishga ixtisoslashgan.
+🔗 Live demo: https://xolericuz.github.io/xoleric.os/ 2
 
 ---
 
-## 🚀 Project Overview
+## 👨‍💻 Creator
 
-XOLERIC.OS — bu oddiy sayt emas.  
-Bu brauzer ichida ishlaydigan AI-powered terminal muhitidir.
-
-Asosiy imkoniyatlar:
-
-- 🖥 Virtual CLI terminal
-- 🤖 AI Core integratsiyasi
-- ⚡ Real-time interaktiv javoblar
-- 🧠 Pattern-based query processing
-- 🌑 Dark futuristic UI
+**X** — Full-Stack Developer va System Architect.  
+Front-end va back-end sohalarida professional, AI tizimlari, modul arxitektura va interaktiv WebOS interfeyslar yaratishga ixtisoslashgan. 3
 
 ---
 
-## 🧠 Vision
+## 📌 Overview
 
-Maqsad — brauzer asosidagi yangi avlod WebOS yaratish.  
-XOLERIC.OS kelajakda quyidagilarga kengaytiriladi:
+XOLERIC.OS — oddiy veb loyihasi emas.  
+Bu brauzer ichida ishlaydigan **AI-quvvatlangan terminal muhitidir**. 4
 
-- Modular AI Engine
-- Plugin tizimi
-- Local computation mode
-- Advanced system commands
-- Secure session management
+Asosiy imkoniyatlar: 5
+
+- ✨ Virtual CLI terminal emulyatsiyasi  
+- 🤖 AI Core integratsiyasi  
+- ⚡ Real-time interaktiv javoblar  
+- 🧩 Pattern-based query processing  
+- 🌓 Futuristik dark UI dizayn 6
+
+---
+
+## 🎯 Vision
+
+Loyiha maqsadi — **brauzer asosidagi yangi avlod WebOS platformasini yaratish**. 7
+
+Kelajakda kengaytiriladigan yo‘nalishlar: 8
+
+- 🧠 Modular AI Engine  
+- 🔌 Plugin tizimi  
+- 💻 Local computation mode  
+- 🛠️ Advanced system commands  
+- 🔐 Secure session management 9
 
 ---
 
 ## 🏗 Architecture Philosophy
 
-- Modular structure
-- Scalable design
-- High performance rendering
-- Secure script execution
-- Clean system layering
+- 📐 Modular struktura  
+- 🚀 Scalable dizayn  
+- 🖥️ High performance rendering  
+- 🔒 Secure script execution  
+- 📦 Clean system layering 10
 
 ---
 
 ## 🔐 Security
 
-Tizim xavfsizlikka yo‘naltirilgan:
-- Sanitized input handling
-- Client-side isolation
-- No unsafe script execution
+Tizim xavfsizlikka yo‘naltirilgan: 11
+
+- 🛡️ Sanitized input handling  
+- ⛔ Client-side isolation  
+- 🔒 No unsafe script execution 12
 
 ---
 
 ## 📌 Purpose
 
-XOLERIC.OS — bu tajriba emas, bu konseptual WebOS platforma.  
-AI va terminal interfeysini birlashtirgan innovatsion loyiha.
+**XOLERIC.OS** — bu tajriba emas, bu **konseptual WebOS platforma**.  
+AI va terminal interfeysini birlashtirgan innovatsion loyiha. 13
 
 ---
 
 ## 📄 License
 
-Private project by X.  
-All rights reserved. 
+Private project by **X**.  
+All rights reserved. 14
